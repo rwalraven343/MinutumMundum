@@ -1,0 +1,26 @@
+TARGETFILE=Bananen.lib
+
+COMPILERCOMMAND=cl
+LINKERCOMMAND=lib
+
+COMPILEROPTIONS=/c /MD /O2
+LINKEROPTIONS=
+
+INCLUDEDIRS=/I"..\\GameEngine\\GameLib\\ThirdParty\SDL-1.2.14\include"
+LIBRARYDIRS=
+
+SOURCEFILES=gamepath.cpp image.cpp model.cpp octtree.cpp path.cpp planet.cpp renderer.cpp sector.cpp shmath.cpp
+OBJECTFILES=$(SOURCEFILES:.cpp=.obj)
+LIBRARYFILES=
+
+all: $(TARGETFILE)
+
+$(TARGETFILE): $(OBJECTFILES)
+	$(LINKERCOMMAND) $(LINKEROPTIONS) $(LIBRARYDIRS) $(OBJECTFILES) $(LIBRARYFILES) /OUT:$(TARGETFILE)
+
+$(OBJECTFILES):
+	$(COMPILERCOMMAND) $(COMPILEROPTIONS) $(INCLUDEDIRS) $(SOURCEFILES)
+
+clean:
+	del $(TARGETFILE)
+	del *.obj

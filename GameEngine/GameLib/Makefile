@@ -1,0 +1,26 @@
+TARGETFILE=GameLib.lib
+
+COMPILERCOMMAND=cl
+LINKERCOMMAND=lib
+
+COMPILEROPTIONS=/c /MD /O2
+LINKEROPTIONS=
+
+INCLUDEDIRS=/I"ThirdParty\SDL-1.2.14\include" /I"ThirdParty\OpenAL 1.1 SDK\include" /I"ThirdParty\freealut-1.1.0-bin\include" /I"ThirdParty\vorbis-sdk-1.0rc2\include"
+LIBRARYDIRS=
+
+SOURCEFILES=system.cpp video.cpp audio.cpp input.cpp
+OBJECTFILES=$(SOURCEFILES:.cpp=.obj)
+LIBRARYFILES=
+
+all: $(TARGETFILE)
+
+$(TARGETFILE): $(OBJECTFILES)
+	$(LINKERCOMMAND) $(LINKEROPTIONS) $(LIBRARYDIRS) $(OBJECTFILES) $(LIBRARYFILES) /OUT:$(TARGETFILE)
+
+$(OBJECTFILES):
+	$(COMPILERCOMMAND) $(COMPILEROPTIONS) $(INCLUDEDIRS) $(SOURCEFILES)
+
+clean:
+	del $(TARGETFILE)
+	del *.obj
