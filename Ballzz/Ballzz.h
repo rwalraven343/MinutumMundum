@@ -13,6 +13,7 @@ namespace BALLZZ
 	typedef FEATURE<WORLD> FEATURE;
 
 	#include "ball_object.h"
+	#include "flipper_object.h"
 
 	#include "ballzz_table_map.h"
 

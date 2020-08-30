@@ -132,7 +132,7 @@ class BALL_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 
 	bool main_exit() const
 	{
-		return(SOLID_OCTAGON_OBJECT::isgone());
+		return(SOLID_OCTAGON_OBJECT::isgone() || SOLID_OCTAGON_OBJECT::getposition().y>24*512);
 	}
 
 	void main_update(WORLD &world)

@@ -26,6 +26,24 @@ bool BALLZZ::mainloop_level()
 
 	ball.main_init(VECTOR((14*512)+256,(22*512)+256),0,VECTOR(0,-2048),0,world);
 
+	FLIPPER_OBJECT right_flipper;
+
+	right_flipper.main_init(VECTOR(9*512,23*512),0,VECTOR(0,0),0,world);
+
+	right_flipper.connection_init_reset(VECTOR(9*512,23*512),VECTOR(9*512,22*512),
+                                        VECTOR(9*512,23*512),VECTOR(10*512,23*512),
+                                        VECTOR(9*512,23*512),VECTOR(9*512,24*512),
+                                        VECTOR(9*512,23*512),VECTOR(8*512,23*512));
+
+	FLIPPER_OBJECT left_flipper;
+
+	left_flipper.main_init(VECTOR(7*512,23*512),0,VECTOR(0,0),0,world);
+
+	left_flipper.connection_init_reset(VECTOR(7*512,23*512),VECTOR(7*512,22*512),
+                                       VECTOR(7*512,23*512),VECTOR(8*512,23*512),
+                                       VECTOR(7*512,23*512),VECTOR(7*512,24*512),
+                                       VECTOR(7*512,23*512),VECTOR(6*512,23*512));
+
 	INPUT::clear();
 
 	world.begin_first_frame();
@@ -41,16 +59,38 @@ bool BALLZZ::mainloop_level()
 			camera_rotating=true;
 		}
 
+		if (right_flipper.main_exit() || right_flipper.connection_isgone())
+		{
+			right_flipper.main_reset(world);
+
+			right_flipper.main_init(VECTOR(9*512,23*512),0,VECTOR(0,0),0,world);
+
+			right_flipper.connection_init_reset(VECTOR(9*512,23*512),VECTOR(9*512,22*512),
+                                                VECTOR(9*512,23*512),VECTOR(10*512,23*512),
+                                                VECTOR(9*512,23*512),VECTOR(9*512,24*512),
+                                                VECTOR(9*512,23*512),VECTOR(8*512,23*512));
+		}
+
+		if (left_flipper.main_exit() || left_flipper.connection_isgone())
+		{
+			left_flipper.main_reset(world);
+
+			left_flipper.main_init(VECTOR(7*512,23*512),0,VECTOR(0,0),0,world);
+
+			left_flipper.connection_init_reset(VECTOR(7*512,23*512),VECTOR(7*512,22*512),
+                                               VECTOR(7*512,23*512),VECTOR(8*512,23*512),
+                                               VECTOR(7*512,23*512),VECTOR(7*512,24*512),
+                                               VECTOR(7*512,23*512),VECTOR(6*512,23*512));
+		}
+
 		world.integrate();
 
-		camera_pos  =ball.getposition();
+		camera_pos.setzero();
+		camera_pos.x=8*512;
+		camera_pos.y=ball.getposition().y;
 		camera_vel  =ball.getlinear_velocity();
 		camera_angle=0;
-		if (camera_rotating)
-		{
-			camera_angle=ball.getorientation();
-		}
-		camera_zoom =4;
+		camera_zoom =8;
 
 		VIDEO::cls();
 		VIDEO::camera(camera_pos.x,camera_pos.y,camera_angle,camera_zoom);
