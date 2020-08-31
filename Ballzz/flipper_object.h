@@ -51,14 +51,20 @@ class FLIPPER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE
 	{
 		if (!BIG_SOLID_OBJECT::hasvapourized())
 		{
-			if (INPUT::KEYBOARD::right())
+			if (!INPUT::KEYBOARD::b())
 			{
-				BIG_SOLID_OBJECT::addtorque(4.096e9);
+				if (INPUT::KEYBOARD::right())
+				{
+					BIG_SOLID_OBJECT::addtorque(4.096e9);
+				}
+				if (INPUT::KEYBOARD::left())
+				{
+					BIG_SOLID_OBJECT::addtorque(-4.096e9);
+				}
 			}
-
-			if (INPUT::KEYBOARD::left())
+			else
 			{
-				BIG_SOLID_OBJECT::addtorque(-4.096e9);
+				BIG_SOLID_OBJECT::addtorque(-BIG_SOLID_OBJECT::getangular_momentum()/timestep);
 			}
 
 			if (!conn1.isgone())

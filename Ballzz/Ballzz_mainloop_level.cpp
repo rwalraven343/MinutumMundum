@@ -44,6 +44,33 @@ bool BALLZZ::mainloop_level()
                                        VECTOR(7*512,23*512),VECTOR(7*512,24*512),
                                        VECTOR(7*512,23*512),VECTOR(6*512,23*512));
 
+	FLIPPER_OBJECT xflipper1;
+
+	xflipper1.main_init(VECTOR(2*512,10*512),0,VECTOR(0,0),0,world);
+
+	xflipper1.connection_init_reset(VECTOR(2*512,10*512),VECTOR(2*512,9*512),
+                                    VECTOR(2*512,10*512),VECTOR(3*512,10*512),
+                                    VECTOR(2*512,10*512),VECTOR(2*512,11*512),
+                                    VECTOR(2*512,10*512),VECTOR(1*512,10*512));
+
+	FLIPPER_OBJECT xflipper2;
+
+	xflipper2.main_init(VECTOR(4*512,11*512),0,VECTOR(0,0),0,world);
+
+	xflipper2.connection_init_reset(VECTOR(4*512,11*512),VECTOR(4*512,10*512),
+                                    VECTOR(4*512,11*512),VECTOR(5*512,11*512),
+                                    VECTOR(4*512,11*512),VECTOR(4*512,12*512),
+                                    VECTOR(4*512,11*512),VECTOR(3*512,11*512));
+
+	FLIPPER_OBJECT xflipper3;
+
+	xflipper3.main_init(VECTOR(12*512,12*512),0,VECTOR(0,0),0,world);
+
+	xflipper3.connection_init_reset(VECTOR(12*512,12*512),VECTOR(12*512,11*512),
+                                    VECTOR(12*512,12*512),VECTOR(13*512,12*512),
+                                    VECTOR(12*512,12*512),VECTOR(12*512,13*512),
+                                    VECTOR(12*512,12*512),VECTOR(11*512,12*512));
+
 	INPUT::clear();
 
 	world.begin_first_frame();
@@ -83,6 +110,42 @@ bool BALLZZ::mainloop_level()
                                                VECTOR(7*512,23*512),VECTOR(6*512,23*512));
 		}
 
+		if (xflipper1.main_exit() || xflipper1.connection_isgone())
+		{
+			xflipper1.main_reset(world);
+
+			xflipper1.main_init(VECTOR(2*512,10*512),0,VECTOR(0,0),0,world);
+
+			xflipper1.connection_init_reset(VECTOR(2*512,10*512),VECTOR(2*512,9*512),
+                                            VECTOR(2*512,10*512),VECTOR(3*512,10*512),
+                                            VECTOR(2*512,10*512),VECTOR(2*512,11*512),
+                                            VECTOR(2*512,10*512),VECTOR(1*512,10*512));
+		}
+
+		if (xflipper2.main_exit() || xflipper2.connection_isgone())
+		{
+			xflipper2.main_reset(world);
+
+			xflipper2.main_init(VECTOR(4*512,11*512),0,VECTOR(0,0),0,world);
+
+			xflipper2.connection_init_reset(VECTOR(4*512,11*512),VECTOR(4*512,10*512),
+                                            VECTOR(4*512,11*512),VECTOR(5*512,11*512),
+                                            VECTOR(4*512,11*512),VECTOR(4*512,12*512),
+                                            VECTOR(4*512,11*512),VECTOR(3*512,11*512));
+		}
+
+		if (xflipper3.main_exit() || xflipper3.connection_isgone())
+		{
+			xflipper3.main_reset(world);
+
+			xflipper3.main_init(VECTOR(12*512,12*512),0,VECTOR(0,0),0,world);
+
+			xflipper3.connection_init_reset(VECTOR(12*512,12*512),VECTOR(12*512,11*512),
+                                            VECTOR(12*512,12*512),VECTOR(13*512,12*512),
+                                            VECTOR(12*512,12*512),VECTOR(12*512,13*512),
+                                            VECTOR(12*512,12*512),VECTOR(11*512,12*512));
+		}
+
 		world.integrate();
 
 		camera_pos.setzero();
@@ -90,7 +153,7 @@ bool BALLZZ::mainloop_level()
 		camera_pos.y=ball.getposition().y;
 		camera_vel  =ball.getlinear_velocity();
 		camera_angle=0;
-		camera_zoom =8;
+		camera_zoom =9;
 
 		VIDEO::cls();
 		VIDEO::camera(camera_pos.x,camera_pos.y,camera_angle,camera_zoom);
