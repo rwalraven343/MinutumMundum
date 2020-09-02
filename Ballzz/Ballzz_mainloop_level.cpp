@@ -50,7 +50,9 @@ bool BALLZZ::mainloop_level()
 	double video_radius=squareroot(square(VIDEO::width())+square(VIDEO::height()))/2;
 	double audio_radius=16777216;
 
-	int max_specials=8;
+	int max_specials=12;
+
+	int score=0;
 
 	MAP map(ballzz_table_map_properties);
 
@@ -199,6 +201,8 @@ bool BALLZZ::mainloop_level()
 
 				ball.addspecialforce(f.getrotated(RANDOM::global(-45,45)));
 
+				score+=100;
+
 				specials[i].init_reset();
 			}
 		}
@@ -249,6 +253,8 @@ bool BALLZZ::mainloop_level()
 		world.draw_foreground(camera_pos,video_radius*camera_zoom,0.75);
 		if (VIDEO::DYNAMIC_LIGHTING::available()) {VIDEO::DYNAMIC_LIGHTING::setlayer(3);}
 		if (VIDEO::DYNAMIC_LIGHTING::available()) {VIDEO::DYNAMIC_LIGHTING::draw_ambientlight(1,1,1,1);}
+
+		VIDEO::TEXT::print_number_fixed((-VIDEO::width()/2),(-VIDEO::height()/2),VIDEO::width()/11,VIDEO::height()/11,score,1,1,1,1);
 
 		AUDIO::listener_topdown(camera_pos.x,camera_pos.y,camera_vel.x,camera_vel.y,camera_angle);
 
