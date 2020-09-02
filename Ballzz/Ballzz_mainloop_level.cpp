@@ -37,7 +37,7 @@ namespace BALLZZ
 	};
 }
 
-bool BALLZZ::mainloop_level()
+bool BALLZZ::mainloop_level(int &high_score)
 {
 	bool exit_value=false;
 
@@ -270,6 +270,11 @@ bool BALLZZ::mainloop_level()
 	delete[] specials;
 
 	INPUT::clear();
+
+	if (score>high_score)
+	{
+		high_score=score;
+	}
 
 	return(exit_value);
 }

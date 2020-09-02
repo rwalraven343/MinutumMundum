@@ -17,7 +17,7 @@ namespace BALLZZ
 
 	#include "ballzz_table_map.h"
 
-	bool mainloop_level();
+	bool mainloop_level(int &high_score);
 
 	void mainloop();
 }
