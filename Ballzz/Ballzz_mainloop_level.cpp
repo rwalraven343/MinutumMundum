@@ -261,6 +261,8 @@ bool BALLZZ::mainloop_level()
 		world.end_frame();
 	}
 
+	delete[] specials;
+
 	INPUT::clear();
 
 	return(exit_value);
