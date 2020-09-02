@@ -3,6 +3,40 @@
 #include "..\\GameEngine\\GameEngine.h"
 #include "Ballzz.h"
 
+namespace BALLZZ
+{
+	struct SPECIAL
+	{
+		SPECIAL();
+		~SPECIAL();
+
+		void init_reset();
+
+		bool wasinit() const;
+		bool isgone() const;
+
+		bool iswithin(const VECTOR &pos) const;
+
+		void light() const;
+
+		void draw() const;
+
+      private:
+
+		bool initialized;
+
+		CIRCLE circle;
+
+		VIDEO::TEXTURE sprite;
+
+		double start_time;
+		double life_time;
+
+		SPECIAL(const SPECIAL &other) {}
+		SPECIAL& operator=(const SPECIAL &other) {}
+	};
+}
+
 bool BALLZZ::mainloop_level()
 {
 	bool exit_value=false;
@@ -15,6 +49,8 @@ bool BALLZZ::mainloop_level()
 
 	double video_radius=squareroot(square(VIDEO::width())+square(VIDEO::height()))/2;
 	double audio_radius=16777216;
+
+	int max_specials=8;
 
 	MAP map(ballzz_table_map_properties);
 
@@ -70,6 +106,8 @@ bool BALLZZ::mainloop_level()
                                     VECTOR(12*512,12*512),VECTOR(13*512,12*512),
                                     VECTOR(12*512,12*512),VECTOR(12*512,13*512),
                                     VECTOR(12*512,12*512),VECTOR(11*512,12*512));
+
+	SPECIAL *specials=new SPECIAL[max_specials];
 
 	INPUT::clear();
 
@@ -146,6 +184,25 @@ bool BALLZZ::mainloop_level()
                                             VECTOR(12*512,12*512),VECTOR(11*512,12*512));
 		}
 
+		ball.clearspecialforces();
+
+		for (int i=0;i<max_specials;i++)
+		{
+			if (!specials[i].wasinit() || specials[i].isgone())
+			{
+				specials[i].init_reset();
+			}
+
+			if (specials[i].iswithin(ball.getposition()))
+			{
+				VECTOR f(0,-4.096e6);
+
+				ball.addspecialforce(f.getrotated(RANDOM::global(-45,45)));
+
+				specials[i].init_reset();
+			}
+		}
+
 		world.integrate();
 
 		camera_pos.setzero();
@@ -169,6 +226,18 @@ bool BALLZZ::mainloop_level()
 		if (VIDEO::DYNAMIC_LIGHTING::available()) {world.light_tertiary  (camera_pos,video_radius*camera_zoom);}
 		if (VIDEO::DYNAMIC_LIGHTING::available()) {world.light_secondary (camera_pos,video_radius*camera_zoom);}
 		if (VIDEO::DYNAMIC_LIGHTING::available()) {world.light_primary   (camera_pos,video_radius*camera_zoom);}
+		for (int i=0;i<max_specials;i++)
+		{
+			if (specials[i].wasinit() && !specials[i].isgone())
+			{
+				if (VIDEO::DYNAMIC_LIGHTING::available())
+				{
+					specials[i].light();
+				}
+
+				specials[i].draw();
+			}
+		}
 		world.draw_tertiary  (camera_pos,video_radius*camera_zoom,1);
 		world.draw_secondary (camera_pos,video_radius*camera_zoom,1);
 		world.draw_primary   (camera_pos,video_radius*camera_zoom,1);
@@ -195,4 +264,64 @@ bool BALLZZ::mainloop_level()
 	INPUT::clear();
 
 	return(exit_value);
+}
+
+BALLZZ::SPECIAL::SPECIAL()
+{
+	sprite=VIDEO::loadtexture("Data\\Textures\\Sprites\\arrow.bmp");
+
+	initialized=false;
+}
+
+BALLZZ::SPECIAL::~SPECIAL()
+{
+	VIDEO::freetexture(sprite);
+}
+
+void BALLZZ::SPECIAL::init_reset()
+{
+	circle=CIRCLE(VECTOR(RANDOM::global(0,13*128*4),RANDOM::global(0,24*128*4)),256);
+
+	start_time=SYSTEM::seconds_since_startup();
+
+	life_time=RANDOM::global(15,30);
+
+	initialized=true;
+}
+
+bool BALLZZ::SPECIAL::wasinit() const
+{
+	return(initialized);
+}
+
+bool BALLZZ::SPECIAL::isgone() const
+{
+	return(SYSTEM::seconds_since_startup()>(start_time+life_time));
+}
+
+bool BALLZZ::SPECIAL::iswithin(const VECTOR &pos) const
+{
+	double t=SYSTEM::seconds_since_startup()-start_time;
+
+	if (t>=life_time/4 && t<=(life_time*3)/4)
+	{
+		return(circle.iswithin(pos,0));
+	}
+
+	return(false);
+}
+
+void BALLZZ::SPECIAL::light() const
+{
+	VIDEO::DYNAMIC_LIGHTING::draw_pointlight(circle.position.x,circle.position.y,1,1,1,compact_gaussian(SYSTEM::seconds_since_startup()-start_time,life_time,false),1024);
+}
+
+void BALLZZ::SPECIAL::draw() const
+{
+	VECTOR p1=circle.position+VECTOR(-circle.radius,-circle.radius);
+	VECTOR p2=circle.position+VECTOR( circle.radius,-circle.radius);
+	VECTOR p3=circle.position+VECTOR( circle.radius, circle.radius);
+	VECTOR p4=circle.position+VECTOR(-circle.radius, circle.radius);
+
+	VIDEO::draw_quad_texture(p1.x,p1.y,p2.x,p2.y,p3.x,p3.y,p4.x,p4.y,sprite,compact_gaussian(SYSTEM::seconds_since_startup()-start_time,life_time,false));
 }

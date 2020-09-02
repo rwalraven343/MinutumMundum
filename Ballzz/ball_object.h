@@ -8,6 +8,8 @@ class BALL_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 
 	AUDIO::SOURCE explosion_snd;
 
+	VECTOR specialforces;
+
 	bool main_initialized;
 
   public:
@@ -31,12 +33,15 @@ class BALL_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 		SOLID_OCTAGON_OBJECT::init_reset(ball_object_properties);
 
 		explosion_snd.rewind();
+
+		specialforces.setzero();
 	}
 
 	void control(double timestep)
 	{
 		if (!SOLID_OCTAGON_OBJECT::hasvapourized())
 		{
+			SOLID_OCTAGON_OBJECT::addforce(specialforces);
 		}
 	}
 
@@ -137,5 +142,15 @@ class BALL_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 
 	void main_update(WORLD &world)
 	{
+	}
+
+	void clearspecialforces()
+	{
+		specialforces.setzero();
+	}
+
+	void addspecialforce(const VECTOR &f)
+	{
+		specialforces+=f;
 	}
 };
