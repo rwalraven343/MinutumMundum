@@ -217,6 +217,7 @@
    <property name="linear_motion_loop_start" value="0"/>
    <property name="linear_motion_type" value="loop"/>
    <property name="orientation" value="0"/>
+   <property name="particle_emitter" value="512,2,6,64,16384,4,8,11.25,0.5,0.25,1,1,0,1,0,0,0.75,4,1,1,1,0,1,0,0,1,8"/>
    <property name="position" value="0,0"/>
    <property name="wrap" value="true"/>
   </properties>

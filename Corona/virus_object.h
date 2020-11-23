@@ -2,7 +2,9 @@
 
 static const SOLID_OCTAGON_OBJECT_PROPERTIES virus_object_properties={{128,1024,4096,0.25,0.25,0.25,0.25,8},{256,384,2,8,16,1024,-8,8,256,0.25,0.25,1.25},1024};
 
-class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
+static const BEAM_PROPERTIES virus_beam_properties={2048,2.048e9,256};
+
+class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE, public BEAM_OBJECT<SOLID_OCTAGON_OBJECT>
 {
 	VIDEO::TEXTURE *sprites;
 
@@ -11,11 +13,13 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 	double anim_currenttime;
 	double anim_totaltime;
 
+	BEAM<SOLID_OCTAGON_OBJECT> beam;
+
 	bool main_initialized;
 
   public:
 
-	VIRUS_OBJECT() : explosion_snd("Data\\Samples\\explosion.wav",1)
+	VIRUS_OBJECT() : explosion_snd("Data\\Samples\\explosion.wav",1),beam(32)
 	{
 		SOLID_OCTAGON_OBJECT::init_reset(virus_object_properties);
 
@@ -23,6 +27,8 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 
 		anim_currenttime=0;
 		anim_totaltime=16;
+
+		beam.init_reset(virus_beam_properties,VECTOR(0,0),0,*this);
 
 		main_initialized=false;
 	}
@@ -40,6 +46,8 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 		anim_totaltime=16;
 
 		explosion_snd.rewind();
+
+		beam.init_reset(virus_beam_properties,VECTOR(0,0),0,*this);
 	}
 
 	void control(double timestep)
@@ -72,6 +80,28 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 			{
 				SOLID_OCTAGON_OBJECT::addtorque(torque_constant);
 			}
+
+			if (INPUT::KEYBOARD::b())
+			{
+				if (!beam.isactive())
+				{
+					beam.activate();
+				}
+			}
+			else
+			{
+				if (beam.isactive())
+				{
+					beam.deactivate();
+				}
+			}
+
+			return;
+		}
+
+		if (beam.isactive())
+		{
+			beam.deactivate();
 		}
 	}
 
@@ -105,6 +135,11 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 
 			VIDEO::DYNAMIC_LIGHTING::draw_pointlight(pos.x,pos.y,1,1,1,1,512);
 
+			if (beam.isactive())
+			{
+				beam.light(1,1,1,1,64);
+			}
+
 			return;
 		}
 
@@ -115,6 +150,11 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 	{
 		if (!SOLID_OCTAGON_OBJECT::hasvapourized())
 		{
+			if (beam.isactive())
+			{
+				beam.draw(0,1,0,1,32);
+			}
+
 			SOLID_OCTAGON_OBJECT::draw(sprites[(int)((anim_currenttime/anim_totaltime)*16)],1);
 
 			return;
@@ -141,6 +181,16 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 		}
 	}
 
+	int getnumbeams() const
+	{
+		return(1);
+	}
+
+	BEAM<SOLID_OCTAGON_OBJECT>& getbeam(int i)
+	{
+		return(beam);
+	}
+
 	void main_init(const VECTOR &pos,double angle,const VECTOR &vel,double angular_vel,WORLD &world)
 	{
 		SOLID_OCTAGON_OBJECT::setposition(pos);
@@ -149,6 +199,7 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 		SOLID_OCTAGON_OBJECT::setangular_velocity(angular_vel);
 
 		world.putobject(*this);
+		world.putbeam_object(*this);
 
 		main_initialized=true;
 	}
@@ -158,6 +209,7 @@ class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE
 		reset();
 
 		world.removeobject(*this);
+		world.removebeam_object(*this);
 
 		main_initialized=false;
 	}
