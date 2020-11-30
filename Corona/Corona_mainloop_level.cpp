@@ -3,6 +3,30 @@
 #include "..\\GameEngine\\GameEngine.h"
 #include "Corona.h"
 
+namespace CORONA
+{
+	struct WHITEBLOODCELL_SPAWNER
+	{
+		WHITEBLOODCELL_SPAWNER(int mapwidth,int mapheight,int tilewidth,int tileheight,int tilewidth_scale,int tileheight_scale,const int *shape_index,int numwbcs);
+		~WHITEBLOODCELL_SPAWNER();
+
+		void update(const VECTOR &vpos,double radius,WORLD &world);
+
+      private:
+
+		int mapwidth,mapheight;
+		int tilewidth,tileheight;
+		int tilewidth_scale,tileheight_scale;
+		const int *shape_index;
+
+		WHITEBLOODCELL_OBJECT *wbcs;
+		int numwbcs;
+
+		WHITEBLOODCELL_SPAWNER(const WHITEBLOODCELL_SPAWNER &other) {}
+		WHITEBLOODCELL_SPAWNER& operator=(const WHITEBLOODCELL_SPAWNER &other) {}
+	};
+}
+
 bool CORONA::mainloop_level(const MAP_PROPERTIES &map_properties,int num_level)
 {
 	bool exit_value=false;
@@ -25,6 +49,10 @@ bool CORONA::mainloop_level(const MAP_PROPERTIES &map_properties,int num_level)
 	VIRUS_OBJECT virus;
 
 	virus.main_init(VECTOR((21*512)+256,(44*512)+256),0,VECTOR(0,0),0,world);
+
+	WHITEBLOODCELL_OBJECT whitebloodcell;
+
+	whitebloodcell.main_init(VECTOR((9*512)+256,(34*512)+256),0,VECTOR(0,0),0,world);
 
 	INPUT::clear();
 
@@ -94,4 +122,27 @@ bool CORONA::mainloop_level(const MAP_PROPERTIES &map_properties,int num_level)
 	INPUT::clear();
 
 	return(exit_value);
+}
+
+CORONA::WHITEBLOODCELL_SPAWNER::WHITEBLOODCELL_SPAWNER(int mapwidth,int mapheight,int tilewidth,int tileheight,int tilewidth_scale,int tileheight_scale,const int *shape_index,int numwbcs)
+{
+	this->mapwidth=mapwidth;
+	this->mapheight=mapheight;
+	this->tilewidth=tilewidth;
+	this->tileheight=tileheight;
+	this->tilewidth_scale=tilewidth_scale;
+	this->tileheight_scale=tileheight_scale;
+	this->shape_index=shape_index;
+
+	wbcs=new WHITEBLOODCELL_OBJECT[numwbcs];
+	this->numwbcs=numwbcs;
+}
+
+CORONA::WHITEBLOODCELL_SPAWNER::~WHITEBLOODCELL_SPAWNER()
+{
+	delete[] wbcs;
+}
+
+void CORONA::WHITEBLOODCELL_SPAWNER::update(const VECTOR &vpos,double radius,WORLD &world)
+{
 }

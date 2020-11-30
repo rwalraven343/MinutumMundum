@@ -13,6 +13,7 @@ namespace CORONA
 	typedef FEATURE<WORLD> FEATURE;
 
 	#include "virus_object.h"
+	#include "whitebloodcell_object.h"
 
 	#include "corona_level1_map.h"
 
