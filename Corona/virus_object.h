@@ -2,7 +2,7 @@
 
 static const SOLID_OCTAGON_OBJECT_PROPERTIES virus_object_properties={{128,1024,4096,0.25,0.25,0.25,0.25,8},{256,384,2,8,16,1024,-8,8,256,0.25,0.25,1.25},1024};
 
-static const BEAM_PROPERTIES virus_beam_properties={2048,2.048e9,256};
+static const BEAM_PROPERTIES virus_beam_properties={2048,8.192e9,256};
 
 class VIRUS_OBJECT : public SOLID_OCTAGON_OBJECT, public FEATURE, public BEAM_OBJECT<SOLID_OCTAGON_OBJECT>
 {

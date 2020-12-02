@@ -22,6 +22,8 @@ namespace CORONA
 		WHITEBLOODCELL_OBJECT *wbcs;
 		int numwbcs;
 
+		bool trytogetsavespawnpos(VECTOR &spawnpos,const VECTOR &vpos,double radius) const;
+
 		WHITEBLOODCELL_SPAWNER(const WHITEBLOODCELL_SPAWNER &other) {}
 		WHITEBLOODCELL_SPAWNER& operator=(const WHITEBLOODCELL_SPAWNER &other) {}
 	};
@@ -50,9 +52,11 @@ bool CORONA::mainloop_level(const MAP_PROPERTIES &map_properties,int num_level)
 
 	virus.main_init(VECTOR((21*512)+256,(44*512)+256),0,VECTOR(0,0),0,world);
 
-	WHITEBLOODCELL_OBJECT whitebloodcell;
-
-	whitebloodcell.main_init(VECTOR((9*512)+256,(34*512)+256),0,VECTOR(0,0),0,world);
+	WHITEBLOODCELL_SPAWNER whitebloodcell_spawner(map.getproperties().mapwidth,map.getproperties().mapheight,
+                                                  map.getproperties().tilewidth,map.getproperties().tileheight,
+                                                  map.getproperties().tilewidth_scale,map.getproperties().tileheight_scale,
+                                                  CORONA_LEVEL1_MAP::PRIMARY_LAYER::shape_index,
+                                                  3);
 
 	INPUT::clear();
 
@@ -68,6 +72,8 @@ bool CORONA::mainloop_level(const MAP_PROPERTIES &map_properties,int num_level)
 		{
 			camera_rotating=true;
 		}
+
+		whitebloodcell_spawner.update(virus.getposition(),video_radius*4,world);
 
 		world.integrate();
 
@@ -145,4 +151,56 @@ CORONA::WHITEBLOODCELL_SPAWNER::~WHITEBLOODCELL_SPAWNER()
 
 void CORONA::WHITEBLOODCELL_SPAWNER::update(const VECTOR &vpos,double radius,WORLD &world)
 {
+	for (int i=0;i<numwbcs;i++)
+	{
+		if (!wbcs[i].main_wasinit())
+		{
+			VECTOR spawnpos;
+
+			if (trytogetsavespawnpos(spawnpos,vpos,radius))
+			{
+				wbcs[i].main_init(spawnpos,0,VECTOR(0,0),0,world);
+
+				wbcs[i].settargetpos(vpos);
+			}
+		}
+		else if (!wbcs[i].main_exit())
+		{
+			wbcs[i].settargetpos(vpos);
+		}
+		else
+		{
+			wbcs[i].main_reset(world);
+		}
+	}
+}
+
+bool CORONA::WHITEBLOODCELL_SPAWNER::trytogetsavespawnpos(VECTOR &spawnpos,const VECTOR &vpos,double radius) const
+{
+	VECTOR norm;
+
+	norm.x=RANDOM::global(-32,32);
+	norm.y=RANDOM::global(-32,32);
+
+	norm=norm.getnormal();
+
+	if (!equalszero(norm.getlength()-1))
+	{
+		return(false);
+	}
+
+	spawnpos=vpos+(norm*radius);
+
+	int mx=(int)(spawnpos.x/(tilewidth*tilewidth_scale));
+	int my=(int)(spawnpos.y/(tileheight*tileheight_scale));
+
+	if (mx>=0 && mx<mapwidth && my>=0 && my<mapheight)
+	{
+		if (shape_index[mx+my*mapwidth]==-1)
+		{
+			return(true);
+		}
+	}
+
+	return(false);
 }

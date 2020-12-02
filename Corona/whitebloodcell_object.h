@@ -4,6 +4,10 @@ static const LIQUID_OBJECT_PROPERTIES whitebloodcell_object_properties={{512,768
 
 class WHITEBLOODCELL_OBJECT : public BIG_LIQUID_OBJECT, public FEATURE
 {
+	double lifetimer;
+
+	VECTOR targetpos;
+
 	bool main_initialized;
 
   public:
@@ -11,6 +15,8 @@ class WHITEBLOODCELL_OBJECT : public BIG_LIQUID_OBJECT, public FEATURE
 	WHITEBLOODCELL_OBJECT()
 	{
 		BIG_LIQUID_OBJECT::init_reset(whitebloodcell_object_properties);
+
+		lifetimer=8*16;
 
 		main_initialized=false;
 	}
@@ -22,12 +28,24 @@ class WHITEBLOODCELL_OBJECT : public BIG_LIQUID_OBJECT, public FEATURE
 	void reset()
 	{
 		BIG_LIQUID_OBJECT::init_reset(whitebloodcell_object_properties);
+
+		lifetimer=8*16;
+
+		targetpos=VECTOR(0,0);
 	}
 
 	void control(double timestep)
 	{
 		if (!BIG_LIQUID_OBJECT::hasvapourized())
 		{
+			VECTOR force=(targetpos-BIG_LIQUID_OBJECT::getposition()).getnormal()*2.048e4;
+
+			BIG_LIQUID_OBJECT::addforce(force);
+
+			if (lifetimer<=0)
+			{
+				BIG_LIQUID_OBJECT::sethealth(0);
+			}
 		}
 	}
 
@@ -49,6 +67,8 @@ class WHITEBLOODCELL_OBJECT : public BIG_LIQUID_OBJECT, public FEATURE
 	void integrate(double timestep)
 	{
 		BIG_LIQUID_OBJECT::integrate(timestep);
+
+		lifetimer-=timestep;
 	}
 
 	void light() const
@@ -117,5 +137,10 @@ class WHITEBLOODCELL_OBJECT : public BIG_LIQUID_OBJECT, public FEATURE
 
 	void main_update(WORLD &world)
 	{
+	}
+
+	void settargetpos(const VECTOR &tp)
+	{
+		targetpos=tp;
 	}
 };
