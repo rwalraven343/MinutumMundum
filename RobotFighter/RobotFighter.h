@@ -15,6 +15,7 @@ namespace ROBOT_FIGHTER
 	#include "robot_fighter_object.h"
 	#include "block_object.h"
 	#include "ball_object.h"
+	#include "flyer_object.h"
 
 	#include "robot_fighter_level1_map.h"
 

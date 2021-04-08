@@ -17,9 +17,6 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 	double video_radius=squareroot(square(VIDEO::width())+square(VIDEO::height()))/2;
 	double audio_radius=16777216;
 
-	int numblocks=4;
-	int numballs=4;
-
 	MAP map(map_properties);
 
 	WORLD world(map);
@@ -28,16 +25,8 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 
 	ROBOT_FIGHTER_OBJECT *robot_fighter=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_robot_fighter_1_4(world);
 
-	BLOCK_OBJECT *blocks=new BLOCK_OBJECT[numblocks];
-	BALL_OBJECT *balls=new BALL_OBJECT[numballs];
-	for (int i=0;i<numblocks;i++)
-	{
-		blocks[i].main_init(VECTOR(768+(512*6)+(i*512)+512,2304-1024),0,VECTOR(0,0),0,world);
-	}
-	for (int i=0;i<numballs;i++)
-	{
-		balls[i].main_init(VECTOR(768+(512*6)+(i*512),2304-1024),0,VECTOR(0,0),0,world);
-	}
+	FLYER_OBJECT flyer;
+	flyer.main_init(VECTOR(1024,1000),0,VECTOR(0,0),0,world);
 
 	INPUT::clear();
 
@@ -125,8 +114,6 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 	}
 
 	delete robot_fighter;
-	delete[] blocks;
-	delete[] balls;
 
 	INPUT::clear();
 

@@ -57,7 +57,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 		scatterfiremode=false;
 
 		onsolidground_timer=0;
-		facingright_timer=0;
+		facingright_timer=4;
 
 		anim_totaltime_walk=0.75*8;
 		anim_totaltime_jump=0.25*8;
@@ -93,7 +93,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 		scatterfiremode=false;
 
 		onsolidground_timer=0;
-		facingright_timer=0;
+		facingright_timer=4;
 
 		anim_totaltime_walk=0.75*8;
 		anim_totaltime_jump=0.25*8;
@@ -245,11 +245,21 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 				if (INPUT::KEYBOARD::left())
 				{
 					scatterfire_beam_angle-=45*timestep;
+
+					if (absolute(scatterfire_beam_angle)>65)
+					{
+						scatterfire_beam_angle=65*sign(scatterfire_beam_angle);
+					}
 				}
 
 				if (INPUT::KEYBOARD::right())
 				{
 					scatterfire_beam_angle+=45*timestep;
+
+					if (absolute(scatterfire_beam_angle)>65)
+					{
+						scatterfire_beam_angle=65*sign(scatterfire_beam_angle);
+					}
 				}
 			}
 
