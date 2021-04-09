@@ -6,6 +6,7 @@
 #include "Geometry.h"
 #include "physics.h"
 #include "pointmass.h"
+#include "kinematic_motion.h"
 #include "solid_octagon.h"
 
 SOLID_OCTAGON SOLID_OCTAGON::derive(double time) const
@@ -240,6 +241,22 @@ SOLID_OCTAGON SOLID_OCTAGON::derive(double time) const
 		}
 	}
 
+	if (num_kinematic_motions>0)
+	{
+		VECTOR acc;
+
+		for (int i=0;i<num_kinematic_motions;i++)
+		{
+			acc.x+=kinematic_motions[i].deltapos.x*compact_gaussian_diff(time+kinematic_motion_time-kinematic_motions[i].start,kinematic_motions[i].duration);
+			acc.y+=kinematic_motions[i].deltapos.y*compact_gaussian_diff(time+kinematic_motion_time-kinematic_motions[i].start,kinematic_motions[i].duration);
+		}
+
+		delta.pointmasses[ 0].velocity=acc;
+		delta.pointmasses[ 3].velocity=acc;
+		delta.pointmasses[12].velocity=acc;
+		delta.pointmasses[15].velocity=acc;
+	}
+
 	return(delta);
 }
 
@@ -261,6 +278,10 @@ SOLID_OCTAGON SOLID_OCTAGON::operator+(const SOLID_OCTAGON &delta) const
 	temp.cached_timestep=cached_timestep;
 	temp.clist          =clist;
 	temp.heat_to_add    =heat_to_add;
+	temp.num_kinematic_motions=num_kinematic_motions;
+	temp.kinematic_motions    =kinematic_motions;
+	temp.kinematic_motion_loop=kinematic_motion_loop;
+	temp.kinematic_motion_time=kinematic_motion_time;
 
 	return(temp);
 }
@@ -321,6 +342,11 @@ void SOLID_OCTAGON::init_reset(const SOLID_OCTAGON_PROPERTIES &props)
 	clist=0;
 
 	heat_to_add=0;
+
+	num_kinematic_motions=0;
+	kinematic_motions=0;
+	kinematic_motion_loop=0;
+	kinematic_motion_time=0;
 
 	initialized=true;
 }
@@ -384,6 +410,14 @@ bool SOLID_OCTAGON::isgone() const
 	}
 
 	return(false);
+}
+
+void SOLID_OCTAGON::init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop)
+{
+	num_kinematic_motions=num;
+	kinematic_motions=motions;
+	kinematic_motion_loop=loop;
+	kinematic_motion_time=0;
 }
 
 double SOLID_OCTAGON::getapothem() const
@@ -935,6 +969,11 @@ void SOLID_OCTAGON::integrate(double timestep)
 	addheat_pointmasses();
 
 	*this=integrate_RK4(*this,timestep);
+
+	if (num_kinematic_motions>0)
+	{
+		kinematic_motion_time=modulus(kinematic_motion_time+timestep,kinematic_motion_loop);
+	}
 }
 
 void SOLID_OCTAGON::draw(VIDEO::TEXTURE texture,double alpha) const

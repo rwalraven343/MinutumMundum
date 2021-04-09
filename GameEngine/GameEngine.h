@@ -6,6 +6,7 @@
 #include "Geometry.h"
 #include "physics.h"
 #include "pointmass.h"
+#include "kinematic_motion.h"
 #include "solid.h"
 #include "solid_octagon.h"
 #include "liquid.h"

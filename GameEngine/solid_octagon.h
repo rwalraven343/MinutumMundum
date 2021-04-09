@@ -25,6 +25,8 @@ struct SOLID_OCTAGON
 	bool wasinit() const;
 	bool isgone() const;
 
+	void init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop);
+
 	double getapothem() const;
 
 	double getbounding_radius() const;
@@ -92,6 +94,10 @@ struct SOLID_OCTAGON
 	double cached_timestep;
 	const COLLISIONLIST *clist;
 	double heat_to_add;
+	int num_kinematic_motions;
+	const KINEMATIC_MOTION *kinematic_motions;
+	double kinematic_motion_loop;
+	double kinematic_motion_time;
 
 	void addheat_pointmasses();
 

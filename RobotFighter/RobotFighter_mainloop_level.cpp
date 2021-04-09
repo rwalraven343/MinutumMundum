@@ -26,7 +26,23 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 	ROBOT_FIGHTER_OBJECT *robot_fighter=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_robot_fighter_1_4(world);
 
 	FLYER_OBJECT flyer;
-	flyer.main_init(VECTOR(1024,1000),0,VECTOR(0,0),0,world);
+	flyer.main_init(VECTOR(1024,2000),0,VECTOR(0,0),0,world);
+
+	KINEMATIC_MOTION fmotions[4];
+	fmotions[0].deltapos=VECTOR(0,-512);
+	fmotions[0].start=0;
+	fmotions[0].duration=8;
+	fmotions[1].deltapos=VECTOR(1024,0);
+	fmotions[1].start=8;
+	fmotions[1].duration=8;
+	fmotions[2].deltapos=VECTOR(0,512);
+	fmotions[2].start=16;
+	fmotions[2].duration=8;
+	fmotions[3].deltapos=VECTOR(-1024,0);
+	fmotions[3].start=24;
+	fmotions[3].duration=8;
+
+	flyer.init_reset_kinematic_motions(4,fmotions,32);
 
 	INPUT::clear();
 
