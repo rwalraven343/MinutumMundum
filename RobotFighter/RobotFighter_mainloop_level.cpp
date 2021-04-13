@@ -42,7 +42,7 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 	fmotions[3].start=24;
 	fmotions[3].duration=8;
 
-	flyer.init_reset_kinematic_motions(4,fmotions,32);
+	flyer.init_reset_kinematic_motions(4,fmotions,32,false,true);
 
 	INPUT::clear();
 

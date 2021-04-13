@@ -25,7 +25,7 @@ struct SOLID_OCTAGON
 	bool wasinit() const;
 	bool isgone() const;
 
-	void init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop);
+	void init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop,bool hascol,bool hasheat);
 
 	double getapothem() const;
 
@@ -98,6 +98,8 @@ struct SOLID_OCTAGON
 	const KINEMATIC_MOTION *kinematic_motions;
 	double kinematic_motion_loop;
 	double kinematic_motion_time;
+	bool kinematic_motion_hascol;
+	bool kinematic_motion_hasheat;
 
 	void addheat_pointmasses();
 

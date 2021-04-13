@@ -17,7 +17,7 @@ struct SOLID_OCTAGON_OBJECT
 	bool wasinit() const;
 	bool isgone() const;
 
-	void init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop);
+	void init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop,bool hascol,bool hasheat);
 
 	int gethealth() const;
 	int getmaxhealth() const;
@@ -143,11 +143,11 @@ inline bool SOLID_OCTAGON_OBJECT::isgone() const
 	return(false);
 }
 
-inline void SOLID_OCTAGON_OBJECT::init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop)
+inline void SOLID_OCTAGON_OBJECT::init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop,bool hascol,bool hasheat)
 {
 	if (!vapourized)
 	{
-		solid_octagon->init_reset_kinematic_motions(num,motions,loop);
+		solid_octagon->init_reset_kinematic_motions(num,motions,loop,hascol,hasheat);
 	}
 }
 

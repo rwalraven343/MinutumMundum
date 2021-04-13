@@ -233,11 +233,14 @@ SOLID_OCTAGON SOLID_OCTAGON::derive(double time) const
 		{
 			delta.pointmasses[i].velocity+=DVDT::friction(pointmasses[i].velocity,pointmasses[i].mass,clist->friction);
 
-			delta.pointmasses[i].velocity+=DVDT::collision(pointmasses[i].position,*clist,
-                                                           pointmasses[i].velocity,delta.pointmasses[i].velocity,
-                                                           pointmasses[i].mass,density,
-                                                           true,properties->sfriction,properties->dfriction,
-                                                           time,cached_timestep);
+			if (!(num_kinematic_motions>0 && !kinematic_motion_hascol))
+			{
+				delta.pointmasses[i].velocity+=DVDT::collision(pointmasses[i].position,*clist,
+                                                               pointmasses[i].velocity,delta.pointmasses[i].velocity,
+                                                               pointmasses[i].mass,density,
+                                                               true,properties->sfriction,properties->dfriction,
+                                                               time,cached_timestep);
+			}
 		}
 	}
 
@@ -282,6 +285,8 @@ SOLID_OCTAGON SOLID_OCTAGON::operator+(const SOLID_OCTAGON &delta) const
 	temp.kinematic_motions    =kinematic_motions;
 	temp.kinematic_motion_loop=kinematic_motion_loop;
 	temp.kinematic_motion_time=kinematic_motion_time;
+	temp.kinematic_motion_hascol =kinematic_motion_hascol;
+	temp.kinematic_motion_hasheat=kinematic_motion_hasheat;
 
 	return(temp);
 }
@@ -347,6 +352,8 @@ void SOLID_OCTAGON::init_reset(const SOLID_OCTAGON_PROPERTIES &props)
 	kinematic_motions=0;
 	kinematic_motion_loop=0;
 	kinematic_motion_time=0;
+	kinematic_motion_hascol=true;
+	kinematic_motion_hasheat=true;
 
 	initialized=true;
 }
@@ -412,12 +419,14 @@ bool SOLID_OCTAGON::isgone() const
 	return(false);
 }
 
-void SOLID_OCTAGON::init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop)
+void SOLID_OCTAGON::init_reset_kinematic_motions(int num,const KINEMATIC_MOTION *motions,double loop,bool hascol,bool hasheat)
 {
 	num_kinematic_motions=num;
 	kinematic_motions=motions;
 	kinematic_motion_loop=loop;
 	kinematic_motion_time=0;
+	kinematic_motion_hascol=hascol;
+	kinematic_motion_hasheat=hasheat;
 }
 
 double SOLID_OCTAGON::getapothem() const
@@ -720,18 +729,21 @@ void SOLID_OCTAGON::addheat(double ht)
 
 void SOLID_OCTAGON::addheat_pointmasses()
 {
-	double pmht=                 heat_to_add/16;
-	double pmke=getinternal_kinetic_energy()/16;
-
-	VECTOR pos=getposition();
-
-	double deltav;
-
-	for (int i=0;i<16;i++)
+	if (!(num_kinematic_motions>0 && !kinematic_motion_hasheat))
 	{
-		deltav=squareroot(((pmht*2)/pointmasses[i].mass)+((pmke*2)/pointmasses[i].mass)) - squareroot((pmke*2)/pointmasses[i].mass);
+		double pmht=                 heat_to_add/16;
+		double pmke=getinternal_kinetic_energy()/16;
 
-		pointmasses[i].velocity+=(pointmasses[i].position-pos).getnormal()*deltav;
+		VECTOR pos=getposition();
+
+		double deltav;
+
+		for (int i=0;i<16;i++)
+		{
+			deltav=squareroot(((pmht*2)/pointmasses[i].mass)+((pmke*2)/pointmasses[i].mass)) - squareroot((pmke*2)/pointmasses[i].mass);
+
+			pointmasses[i].velocity+=(pointmasses[i].position-pos).getnormal()*deltav;
+		}
 	}
 }
 
