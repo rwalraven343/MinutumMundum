@@ -19,7 +19,7 @@ namespace ROBOT_FIGHTER
 
 	#include "robot_fighter_level1_map.h"
 
-	bool mainloop_level(const MAP_PROPERTIES &map_properties,int num_level);
+	bool mainloop_level1();
 
 	void mainloop();
 }

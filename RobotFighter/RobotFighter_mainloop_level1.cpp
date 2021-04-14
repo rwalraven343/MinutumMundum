@@ -3,7 +3,7 @@
 #include "..\\GameEngine\\GameEngine.h"
 #include "RobotFighter.h"
 
-bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_level)
+bool ROBOT_FIGHTER::mainloop_level1()
 {
 	bool exit_value=false;
 
@@ -17,7 +17,7 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 	double video_radius=squareroot(square(VIDEO::width())+square(VIDEO::height()))/2;
 	double audio_radius=16777216;
 
-	MAP map(map_properties);
+	MAP map(robot_fighter_level1_map_properties);
 
 	WORLD world(map);
 
@@ -25,8 +25,7 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 
 	ROBOT_FIGHTER_OBJECT *robot_fighter=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_robot_fighter_1_4(world);
 
-	FLYER_OBJECT flyer;
-	flyer.main_init(VECTOR(1024,2000),0,VECTOR(0,0),0,world);
+	FLYER_OBJECT *flyer_3_3=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_flyer_3_3(world);
 
 	KINEMATIC_MOTION fmotions[4];
 	fmotions[0].deltapos=VECTOR(0,-512);
@@ -42,7 +41,7 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 	fmotions[3].start=24;
 	fmotions[3].duration=8;
 
-	flyer.init_reset_kinematic_motions(4,fmotions,32,false,true);
+	flyer_3_3->init_reset_kinematic_motions(4,fmotions,32,false,true);
 
 	INPUT::clear();
 
@@ -110,7 +109,7 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 		if (VIDEO::DYNAMIC_LIGHTING::available()) {VIDEO::DYNAMIC_LIGHTING::setlayer(3);}
 		if (VIDEO::DYNAMIC_LIGHTING::available()) {VIDEO::DYNAMIC_LIGHTING::draw_ambientlight(1,1,1,1);}
 
-		VIDEO::TEXT::print_number_fixed((VIDEO::width()/2)-(VIDEO::width()/16),(-VIDEO::height()/2),VIDEO::width()/16,VIDEO::height()/16,num_level,0,1,1,1);
+		VIDEO::TEXT::print_number_fixed((VIDEO::width()/2)-(VIDEO::width()/16),(-VIDEO::height()/2),VIDEO::width()/16,VIDEO::height()/16,1,0,1,1,1);
 
 		VIDEO::camera(0,0,0,1);
 
@@ -130,6 +129,7 @@ bool ROBOT_FIGHTER::mainloop_level(const MAP_PROPERTIES &map_properties,int num_
 	}
 
 	delete robot_fighter;
+	delete flyer_3_3;
 
 	INPUT::clear();
 

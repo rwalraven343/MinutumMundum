@@ -45,7 +45,7 @@ void ROBOT_FIGHTER::mainloop()
 
 	if (!level1_finished)
 	{
-		level1_finished=mainloop_level(robot_fighter_level1_map_properties,1);
+		level1_finished=mainloop_level1();
 
 		if (!level1_finished)
 		{

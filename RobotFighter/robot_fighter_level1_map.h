@@ -818,6 +818,12 @@ namespace ROBOT_FIGHTER_LEVEL1_MAP
 {
 	namespace OBJECTS1
 	{
+		inline FLYER_OBJECT *create_flyer_3_3(WORLD &world)
+		{
+			FLYER_OBJECT *object=new FLYER_OBJECT;
+			object->main_init(VECTOR(1792.000000000000,1792.000000000000),0,VECTOR(0,0),0,world);
+			return(object);
+		}
 		inline ROBOT_FIGHTER_OBJECT *create_robot_fighter_1_4(WORLD &world)
 		{
 			ROBOT_FIGHTER_OBJECT *object=new ROBOT_FIGHTER_OBJECT;

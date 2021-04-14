@@ -392,39 +392,29 @@
   </tile>
  </tileset>
  <tileset firstgid="693" name="objects" tilewidth="128" tileheight="128" tilecount="16" columns="4">
-  <image source="objects.png" trans="000000" width="512" height="512"/>
+  <image source="objects_robotfighter.png" trans="000000" width="512" height="512"/>
   <tile id="0">
-   <properties>
-    <property name="identifier" value="player_spaceship"/>
-   </properties>
-  </tile>
-  <tile id="1">
-   <properties>
-    <property name="identifier" value="block"/>
-   </properties>
-  </tile>
-  <tile id="2">
-   <properties>
-    <property name="identifier" value="enemy_spaceship"/>
-   </properties>
-  </tile>
-  <tile id="3">
-   <properties>
-    <property name="identifier" value="snake_head"/>
-   </properties>
-  </tile>
-  <tile id="4">
-   <properties>
-    <property name="identifier" value="snake_tail"/>
-   </properties>
-  </tile>
-  <tile id="5">
    <properties>
     <property name="identifier" value="robot_fighter"/>
    </properties>
   </tile>
+  <tile id="1">
+   <properties>
+    <property name="identifier" value="flyer"/>
+   </properties>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="identifier" value="block"/>
+   </properties>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="identifier" value="ball"/>
+   </properties>
+  </tile>
  </tileset>
- <layer name="primary" width="64" height="32" visible="0">
+ <layer name="primary" width="64" height="32">
   <properties>
    <property name="angular_motion_type" value="none"/>
    <property name="linear_motion_type" value="none"/>
@@ -928,13 +918,13 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="objects1" width="64" height="32" visible="0">
+ <layer name="objects1" width="64" height="32">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,698,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,694,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,693,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
