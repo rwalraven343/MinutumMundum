@@ -1,12 +1,12 @@
 //Code by Rogier Walraven. Do not distribute.
 
-static const SOLID_OBJECT_PROPERTIES robot_fighter_solid_object_properties={{256,256,1024,4096,0.25,0.25,0.25,0.25,8},{256,384,2,8,16,1024,-8,8,256,0.25,0.25,1.25},16};
+static const SOLID_OBJECT_PROPERTIES walker_solid_object_properties={{256,256,1024,4096,0.25,0.25,0.25,0.25,8},{256,384,2,8,16,1024,-8,8,256,0.25,0.25,1.25},16};
 
-static const CONSTRAINT_SOLID_PROPERTIES robot_fighter_stabilizer_constraint_solid_properties={4096,0.25,0.75,2};
+static const CONSTRAINT_SOLID_PROPERTIES walker_stabilizer_constraint_solid_properties={4096,0.25,0.75,2};
 
-static const BEAM_PROPERTIES robot_fighter_beam_properties={2048,2.68e9,64};
+static const BEAM_PROPERTIES walker_beam_properties={2048,2.68e9,64};
 
-class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEAM_OBJECT<BIG_SOLID_OBJECT>
+class WALKER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEAM_OBJECT<BIG_SOLID_OBJECT>
 {
 	int numframes;
 	VIDEO::TEXTURE *frames;
@@ -35,21 +35,26 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 	BEAM<BIG_SOLID_OBJECT> beam;
 
+	bool hastargetpos;
+	VECTOR targetpos;
+	VECTOR zonepos;
+	double zonewidth;
+
 	bool main_initialized;
 
   public:
 
-	ROBOT_FIGHTER_OBJECT() : explosion_snd("Data\\Samples\\explosion.wav",1),beam(1)
+	WALKER_OBJECT() : explosion_snd("Data\\Samples\\explosion.wav",1),beam(1)
 	{
-		BIG_SOLID_OBJECT::init_reset(robot_fighter_solid_object_properties);
+		BIG_SOLID_OBJECT::init_reset(walker_solid_object_properties);
 
 		numframes=80;
 		frames=VIDEO::loadtileset("Data\\Textures\\Sprites\\robot_fighter.bmp",2048,2560,256,256,0,0,numframes);
 
-		stabilizer_constraint1.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint2.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint3.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint4.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint1.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint2.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint3.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint4.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
 
 		onsolidground=false;
 		facingright=true;
@@ -66,24 +71,27 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 		scatterfire_beam_angle=0;
 
-		beam.init_reset(robot_fighter_beam_properties,VECTOR(96,-44),90,*this);
+		beam.init_reset(walker_beam_properties,VECTOR(96,-44),90,*this);
+
+		hastargetpos=false;
+		zonewidth=0;
 
 		main_initialized=false;
 	}
 
-	~ROBOT_FIGHTER_OBJECT()
+	~WALKER_OBJECT()
 	{
 		VIDEO::freetileset(frames,numframes);
 	}
 
 	void reset()
 	{
-		BIG_SOLID_OBJECT::init_reset(robot_fighter_solid_object_properties);
+		BIG_SOLID_OBJECT::init_reset(walker_solid_object_properties);
 
-		stabilizer_constraint1.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint2.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint3.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint4.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint1.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint2.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint3.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint4.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
 
 		explosion_snd.rewind();
 
@@ -102,7 +110,90 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 		scatterfire_beam_angle=0;
 
-		beam.init_reset(robot_fighter_beam_properties,VECTOR(96,-44),90,*this);
+		beam.init_reset(walker_beam_properties,VECTOR(96,-44),90,*this);
+
+		hastargetpos=false;
+		targetpos=VECTOR(0,0);
+		zonepos=VECTOR(0,0);
+		zonewidth=0;
+	}
+
+	bool input_keyboard_x() const
+	{
+		return(false);
+	}
+
+	bool input_keyboard_b() const
+	{
+		VECTOR pos=BIG_SOLID_OBJECT::getposition();
+
+		if ((targetpos-pos).getlength()<=512)
+		{
+			return(true);
+		}
+
+		return(false);
+	}
+
+	bool input_keyboard_n() const
+	{
+		return(false);
+	}
+
+	bool input_keyboard_left() const
+	{
+		VECTOR pos=BIG_SOLID_OBJECT::getposition();
+
+		if (absolute(targetpos.x-pos.x)<=zonewidth)
+		{
+			if (targetpos.x-pos.x<0)
+			{
+				return(true);
+			}
+		}
+		else
+		{
+			if (zonepos.x-pos.x<0)
+			{
+				return(true);
+			}
+		}
+
+		return(false);
+	}
+
+	bool input_keyboard_right() const
+	{
+		VECTOR pos=BIG_SOLID_OBJECT::getposition();
+
+		if (absolute(targetpos.x-pos.x)<=zonewidth)
+		{
+			if (targetpos.x-pos.x>0)
+			{
+				return(true);
+			}
+		}
+		else
+		{
+			if (zonepos.x-pos.x>0)
+			{
+				return(true);
+			}
+		}
+
+		return(false);
+	}
+
+	bool input_keyboard_up() const
+	{
+		VECTOR pos=BIG_SOLID_OBJECT::getposition();
+
+		if (absolute(targetpos.x-pos.x)<=zonewidth)
+		{
+			return(RANDOM::global(32)==0);
+		}
+
+		return(false);
 	}
 
 	void control(double timestep)
@@ -133,10 +224,10 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 			pos2_3=pos2_3.gettransformed_from(pos,ang);
 			pos2_4=pos2_4.gettransformed_from(pos,ang);
 
-			stabilizer_constraint1.init_reset(robot_fighter_stabilizer_constraint_solid_properties,this,0,pos1_1,pos2_1);
-			stabilizer_constraint2.init_reset(robot_fighter_stabilizer_constraint_solid_properties,this,0,pos1_2,pos2_2);
-			stabilizer_constraint3.init_reset(robot_fighter_stabilizer_constraint_solid_properties,this,0,pos1_3,pos2_3);
-			stabilizer_constraint4.init_reset(robot_fighter_stabilizer_constraint_solid_properties,this,0,pos1_4,pos2_4);
+			stabilizer_constraint1.init_reset(walker_stabilizer_constraint_solid_properties,this,0,pos1_1,pos2_1);
+			stabilizer_constraint2.init_reset(walker_stabilizer_constraint_solid_properties,this,0,pos1_2,pos2_2);
+			stabilizer_constraint3.init_reset(walker_stabilizer_constraint_solid_properties,this,0,pos1_3,pos2_3);
+			stabilizer_constraint4.init_reset(walker_stabilizer_constraint_solid_properties,this,0,pos1_4,pos2_4);
 
 			stabilizer_constraint1.rotate_worldspace_coords_around_point(pos,-ang);
 			stabilizer_constraint2.rotate_worldspace_coords_around_point(pos,-ang);
@@ -175,7 +266,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 			bool oldscatterfiremode=scatterfiremode;
 
-			if (INPUT::KEYBOARD::n())
+			if (input_keyboard_n())
 			{
 				scatterfiremode=true;
 			}
@@ -188,7 +279,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 			{
 				onsolidground=true;
 
-				if (!scatterfiremode && !turning && INPUT::KEYBOARD::up())
+				if (!scatterfiremode && !turning && input_keyboard_up())
 				{
 					BIG_SOLID_OBJECT::addforce((VECTOR(0,-32)*BIG_SOLID_OBJECT::getmass())/timestep);
 				}
@@ -208,9 +299,9 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 			movingleftright=false;
 
-			if (!scatterfiremode && !turning && !(INPUT::KEYBOARD::left() && INPUT::KEYBOARD::right()))
+			if (!scatterfiremode && !turning && !(input_keyboard_left() && input_keyboard_right()))
 			{
-				if (INPUT::KEYBOARD::left())
+				if (input_keyboard_left())
 				{
 					facingright=false;
 					movingleftright=true;
@@ -225,7 +316,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 					}
 				}
 
-				if (INPUT::KEYBOARD::right())
+				if (input_keyboard_right())
 				{
 					facingright=true;
 					movingleftright=true;
@@ -240,9 +331,9 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 					}
 				}
 			}
-			else if (scatterfiremode && !(INPUT::KEYBOARD::left() && INPUT::KEYBOARD::right()))
+			else if (scatterfiremode && !(input_keyboard_left() && input_keyboard_right()))
 			{
-				if (INPUT::KEYBOARD::left())
+				if (input_keyboard_left())
 				{
 					scatterfire_beam_angle-=45*timestep;
 
@@ -252,7 +343,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 					}
 				}
 
-				if (INPUT::KEYBOARD::right())
+				if (input_keyboard_right())
 				{
 					scatterfire_beam_angle+=45*timestep;
 
@@ -276,7 +367,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 				if (facingright)
 				{
-					beam.init_reset(robot_fighter_beam_properties,VECTOR(96,-44),90,*this);
+					beam.init_reset(walker_beam_properties,VECTOR(96,-44),90,*this);
 
 					if (beamactive)
 					{
@@ -285,7 +376,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 				}
 				else
 				{
-					beam.init_reset(robot_fighter_beam_properties,VECTOR(-96,-44),-90,*this);
+					beam.init_reset(walker_beam_properties,VECTOR(-96,-44),-90,*this);
 
 					if (beamactive)
 					{
@@ -302,11 +393,11 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 				if (facingright)
 				{
-					beam.init_reset(robot_fighter_beam_properties,VECTOR(96,-44),scatterfire_beam_angle+90,*this);
+					beam.init_reset(walker_beam_properties,VECTOR(96,-44),scatterfire_beam_angle+90,*this);
 				}
 				else
 				{
-					beam.init_reset(robot_fighter_beam_properties,VECTOR(-96,-44),scatterfire_beam_angle-90,*this);
+					beam.init_reset(walker_beam_properties,VECTOR(-96,-44),scatterfire_beam_angle-90,*this);
 				}
 
 				beam.activate();
@@ -318,7 +409,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 				if (facingright)
 				{
-					beam.init_reset(robot_fighter_beam_properties,VECTOR(96,-44),90,*this);
+					beam.init_reset(walker_beam_properties,VECTOR(96,-44),90,*this);
 
 					if (beamactive)
 					{
@@ -327,7 +418,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 				}
 				else
 				{
-					beam.init_reset(robot_fighter_beam_properties,VECTOR(-96,-44),-90,*this);
+					beam.init_reset(walker_beam_properties,VECTOR(-96,-44),-90,*this);
 
 					if (beamactive)
 					{
@@ -338,7 +429,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 			if (!scatterfiremode)
 			{
-				if (INPUT::KEYBOARD::b() || INPUT::KEYBOARD::n())
+				if (input_keyboard_b() || input_keyboard_n())
 				{
 					if (!beam.isgone() && !beam.isactive())
 					{
@@ -362,7 +453,7 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 				}
 			}
 
-			if (INPUT::KEYBOARD::x())
+			if (input_keyboard_x())
 			{
 				BIG_SOLID_OBJECT::sethealth(0);
 			}
@@ -370,10 +461,10 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 			return;
 		}
 
-		stabilizer_constraint1.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint2.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint3.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
-		stabilizer_constraint4.init_reset(robot_fighter_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint1.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint2.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint3.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
+		stabilizer_constraint4.init_reset(walker_stabilizer_constraint_solid_properties,0,0,VECTOR(),VECTOR());
 
 		onsolidground=false;
 	}
@@ -627,5 +718,18 @@ class ROBOT_FIGHTER_OBJECT : public BIG_SOLID_OBJECT, public FEATURE, public BEA
 
 	void main_update(WORLD &world)
 	{
+	}
+
+	void inittargetpos(double zw)
+	{
+		hastargetpos=true;
+		targetpos=VECTOR(0,0);
+		zonepos=BIG_SOLID_OBJECT::getposition();
+		zonewidth=zw;
+	}
+
+	void settargetpos(const VECTOR &tp)
+	{
+		targetpos=tp;
 	}
 };

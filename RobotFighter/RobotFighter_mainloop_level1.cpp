@@ -25,23 +25,49 @@ bool ROBOT_FIGHTER::mainloop_level1()
 
 	ROBOT_FIGHTER_OBJECT *robot_fighter=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_robot_fighter_1_4(world);
 
-	FLYER_OBJECT *flyer_3_3=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_flyer_3_3(world);
+	WALKER_OBJECT *walker_50_5=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_50_5(world);
+	WALKER_OBJECT *walker_30_6=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_30_6(world);
+	WALKER_OBJECT *walker_60_6=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_60_6(world);
+	WALKER_OBJECT *walker_40_10=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_40_10(world);
+	WALKER_OBJECT *walker_50_15=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_50_15(world);
+	WALKER_OBJECT *walker_30_16=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_30_16(world);
+	WALKER_OBJECT *walker_20_17=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_20_17(world);
+	WALKER_OBJECT *walker_10_19=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_10_19(world);
+	WALKER_OBJECT *walker_40_21=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_40_21(world);
+	WALKER_OBJECT *walker_60_22=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_60_22(world);
+	WALKER_OBJECT *walker_50_25=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_50_25(world);
+	WALKER_OBJECT *walker_30_26=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_30_26(world);
+	WALKER_OBJECT *walker_5_30=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_walker_5_30(world);
 
-	KINEMATIC_MOTION fmotions[4];
-	fmotions[0].deltapos=VECTOR(0,-512);
-	fmotions[0].start=0;
-	fmotions[0].duration=8;
-	fmotions[1].deltapos=VECTOR(1024,0);
-	fmotions[1].start=8;
-	fmotions[1].duration=8;
-	fmotions[2].deltapos=VECTOR(0,512);
-	fmotions[2].start=16;
-	fmotions[2].duration=8;
-	fmotions[3].deltapos=VECTOR(-1024,0);
-	fmotions[3].start=24;
-	fmotions[3].duration=8;
+	walker_50_5->inittargetpos(1024);
+	walker_30_6->inittargetpos(1024);
+	walker_60_6->inittargetpos(1024);
+	walker_40_10->inittargetpos(1024);
+	walker_50_15->inittargetpos(1024);
+	walker_30_16->inittargetpos(1024);
+	walker_20_17->inittargetpos(1024);
+	walker_10_19->inittargetpos(1024);
+	walker_40_21->inittargetpos(1024);
+	walker_60_22->inittargetpos(1024);
+	walker_50_25->inittargetpos(1024);
+	walker_30_26->inittargetpos(1024);
+	walker_5_30->inittargetpos(1024);
 
-	flyer_3_3->init_reset_kinematic_motions(4,fmotions,32,false,true);
+	FLYER_OBJECT *flyer_11_0=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_flyer_11_0(world);
+	FLYER_OBJECT *flyer_13_0=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_flyer_13_0(world);
+	FLYER_OBJECT *flyer_15_0=ROBOT_FIGHTER_LEVEL1_MAP::OBJECTS1::create_flyer_15_0(world);
+
+	KINEMATIC_MOTION motions[2];
+	motions[0].deltapos=VECTOR(0,1024);
+	motions[0].start=0;
+	motions[0].duration=8;
+	motions[1].deltapos=VECTOR(0,-1024);
+	motions[1].start=8;
+	motions[1].duration=8;
+
+	flyer_11_0->init_reset_kinematic_motions(2,motions,16,false,false);
+	flyer_13_0->init_reset_kinematic_motions(2,motions,16,false,false);
+	flyer_15_0->init_reset_kinematic_motions(2,motions,16,false,false);
 
 	INPUT::clear();
 
@@ -65,6 +91,22 @@ bool ROBOT_FIGHTER::mainloop_level1()
 		{
 			camera_zooming=true;
 		}
+
+		VECTOR rfpos=robot_fighter->getposition();
+
+		walker_50_5->settargetpos(rfpos);
+		walker_30_6->settargetpos(rfpos);
+		walker_60_6->settargetpos(rfpos);
+		walker_40_10->settargetpos(rfpos);
+		walker_50_15->settargetpos(rfpos);
+		walker_30_16->settargetpos(rfpos);
+		walker_20_17->settargetpos(rfpos);
+		walker_10_19->settargetpos(rfpos);
+		walker_40_21->settargetpos(rfpos);
+		walker_60_22->settargetpos(rfpos);
+		walker_50_25->settargetpos(rfpos);
+		walker_30_26->settargetpos(rfpos);
+		walker_5_30->settargetpos(rfpos);
 
 		world.integrate();
 
@@ -129,7 +171,22 @@ bool ROBOT_FIGHTER::mainloop_level1()
 	}
 
 	delete robot_fighter;
-	delete flyer_3_3;
+	delete walker_50_5;
+	delete walker_30_6;
+	delete walker_60_6;
+	delete walker_40_10;
+	delete walker_50_15;
+	delete walker_30_16;
+	delete walker_20_17;
+	delete walker_10_19;
+	delete walker_40_21;
+	delete walker_60_22;
+	delete walker_50_25;
+	delete walker_30_26;
+	delete walker_5_30;
+	delete flyer_11_0;
+	delete flyer_13_0;
+	delete flyer_15_0;
 
 	INPUT::clear();
 
