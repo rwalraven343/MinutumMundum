@@ -69,11 +69,13 @@ bool ROBOT_FIGHTER::mainloop_level1()
 	flyer_13_0->init_reset_kinematic_motions(2,motions,16,false,false);
 	flyer_15_0->init_reset_kinematic_motions(2,motions,16,false,false);
 
+	bool levelexit=false;
+
 	INPUT::clear();
 
 	world.begin_first_frame();
 
-	while (!INPUT::KEYBOARD::escape() && !robot_fighter->main_exit())
+	while (!INPUT::KEYBOARD::escape() && !robot_fighter->main_exit() && !levelexit)
 	{
 		if (INPUT::KEYBOARD::one())
 		{
@@ -107,6 +109,8 @@ bool ROBOT_FIGHTER::mainloop_level1()
 		walker_50_25->settargetpos(rfpos);
 		walker_30_26->settargetpos(rfpos);
 		walker_5_30->settargetpos(rfpos);
+
+		levelexit=rfpos.x>=62*512;
 
 		world.integrate();
 
@@ -187,6 +191,11 @@ bool ROBOT_FIGHTER::mainloop_level1()
 	delete flyer_11_0;
 	delete flyer_13_0;
 	delete flyer_15_0;
+
+	if (!INPUT::KEYBOARD::escape() && !robot_fighter->main_exit() && levelexit)
+	{
+		exit_value=true;
+	}
 
 	INPUT::clear();
 
