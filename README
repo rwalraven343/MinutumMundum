@@ -1,35 +1,33 @@
-CMPML, Department of System Failure!
-
 2D Game Engine including two full games!!!
 
 1. Be on Windows.
 
 2. Have Visual Studio installed.
 
-3. Go to the directory GameEngine\GameLib and run :
+3. Go to Visual Studio Command Prompt.
+
+4. Go to the directory GameEngine\GameLib and run :
 	nmake all
 
-4. Go to the directory GameEngine and run :
+5. Go to the directory GameEngine and run :
 	nmake all
 
-5. Go to the directory PSnakes and run :
+6. Go to the directory PSnakes and run :
 	nmake all
 	nmake install
 	cd Binaries
 	PSnakes.exe
 
-6. Have fun with Physical Snakes!!!
+7. Have fun with Physical Snakes!!!
 
-7. Go to the top level directory and run :
+8. Go to the top level directory and run :
 	nmake all
 	nmake install
 	cd Binaries
 	SchizoDriver.exe
 
-8. Have fun with SchizoDriver!!!
+9. Have fun with SchizoDriver!!!
 
-9. The PSnakes code is best as a starting example for your own projects.
+10. The PSnakes code is best as a starting example for your own projects.
 
-10. Create cool stuff ...
-
-End of Document.
+11. Create cool stuff ...
